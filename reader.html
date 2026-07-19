@@ -3,20 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>กำลังอ่านมังงะ - Manga Sound Experience</title>
+  <title>กำลังอ่านมังงะ</title>
+  <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="reader-body">
 
-  <!-- ปุ่มควบคุมเสียงที่ลอยอยู่มุมจอ -->
+  <!-- 🔥 เพิ่มส่วนนี้: หน้าจอ Loading โทนสว่าง -->
+  <div id="loading-screen" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>กำลังโหลด...</p>
+  </div>
+
   <div class="audio-controls">
     <button id="mute-btn" class="control-btn">🔊 เปิดเสียงอยู่</button>
     <a href="index.html" class="control-btn back-btn">⬅️ กลับหน้าเลือกเรื่อง</a>
   </div>
 
-  <!-- ส่วนแสดงผลมังงะ (จะใช้ JavaScript ดึงรูปมาใส่ตามเรื่องที่เลือก) -->
   <main id="manga-viewer" class="manga-viewer">
-    <!-- รูปภาพและจุด Trigger เสียงจะถูกเพิ่มเข้ามาที่นี่ด้วย JavaScript -->
+    <!-- รูปภาพจะถูกเพิ่มเข้ามาที่นี่ด้วย JavaScript -->
   </main>
 
   <script src="reader.js"></script>

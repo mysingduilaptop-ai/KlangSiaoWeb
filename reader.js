@@ -1,4 +1,4 @@
-// 1. จำลองฐานข้อมูลมังงะ (ปรับโครงสร้างให้รองรับ BGM และแก้ไขปีกกาที่พัง)
+// 1. จำลองฐานข้อมูลมังงะ (อัปเดตรายชื่อภาพจริงของเรื่อง Knightsoul Vacation แล้ว)
 const mangaData = {
   Knightsoul_Vacation: {
     bgm: "assets/action-story/battle-theme.mp3", // เพลงคลอหลังแนวตื่นเต้น
@@ -7,7 +7,7 @@ const mangaData = {
       { img: "asset/Knightsoul Vacation/2.png", sfx: "" },
       { img: "asset/Knightsoul Vacation/3.png", sfx: "" },
       { img: "asset/Knightsoul Vacation/4.png", sfx: "" },
-      { img: "asset/Knightsoul Vacation/5.png", sfx: "asset/Knightsoul Vacation/Test.mp3" },
+      { img: "asset/Knightsoul Vacation/5.png", sfx: "asset/Knightsoul Vacation/Test.mp3" }, // 💥 มีเสียงเอฟเฟคเฉพาะฉากที่ 5 เท่านั้น
       { img: "asset/Knightsoul Vacation/6.png", sfx: "" },
       { img: "asset/Knightsoul Vacation/7.png", sfx: "" },
       { img: "asset/Knightsoul Vacation/8.png", sfx: "" },
@@ -29,14 +29,14 @@ const mangaData = {
     ]
   },
   horror: {
-    bgm: "sounds/ambient-dark.mp3", // เพลงคลอหลังหลอนๆ (หาไฟล์มาใส่เพิ่มได้ครับ)
+    bgm: "sounds/ambient-dark.mp3", 
     scenes: [
       { img: "https://via.placeholder.com/800x1200/ffffff/000000?text=[Horror]+Scene+1+Dark+Corridor", sfx: "sounds/creak.mp3" },
       { img: "https://via.placeholder.com/800x1200/ffffff/000000?text=[Horror]+Scene+2+Footsteps", sfx: "sounds/footsteps.mp3" }
     ]
   },
   romance: {
-    bgm: "sounds/sweet-piano.mp3", // เพลงคลอหลังหวานๆ (หาไฟล์มาใส่เพิ่มได้ครับ)
+    bgm: "sounds/sweet-piano.mp3", 
     scenes: [
       { img: "https://via.placeholder.com/800x1200/ffffff/000000?text=[Romance]+Scene+1+Under+Sakura", sfx: "sounds/wind-chime.mp3" },
       { img: "https://via.placeholder.com/800x1200/ffffff/000000?text=[Romance]+Scene+2+Eye+Contact", sfx: "sounds/heartbeat.mp3" }
@@ -44,37 +44,21 @@ const mangaData = {
   }
 };
 
-// 2. ดึงค่าจาก URL เช่น ?story=action
+// 2. ดึงค่าจาก URL (แก้ไขให้ค่าเริ่มต้นตรงกับคีย์ Knightsoul_Vacation)
 const urlParams = new URLSearchParams(window.location.search);
-const storyParam = urlParams.get('story') || 'action';
+const storyParam = urlParams.get('story') || 'Knightsoul_Vacation'; // เปลี่ยนเป็นเรื่องใหม่เรียบร้อย
 const currentStory = mangaData[storyParam];
 
 // สถานะและตัวแปรจัดการระบบเสียง
 let isMuted = false;
-let bgmAudio = null;      // ใช้เก็บอ็อบเจกต์ของเพลงคลอหลัง
-const activeSFXs = [];    // ใช้เก็บอ็อบเจกต์เสียงเอฟเฟคฉากที่กำลังเล่นอยู่
+let bgmAudio = null;      
+const activeSFXs = [];    
 
 const viewer = document.getElementById('manga-viewer');
 const muteBtn = document.getElementById('mute-btn');
+const loadingScreen = document.getElementById('loading-screen'); // ดึง element หน้าโหลดมารองรับ
 
-// 🔥 ฟังก์ชันเริ่มเล่นเพลงคลอหลัง (BGM) วนลูปเบาๆ
-function startBGM(url) {
-  if (!url) return;
-  bgmAudio = new Audio(url);
-  bgmAudio.loop = true;   // ตั้งให้เล่นวนลูปไม่มีวันจบ
-  bgmAudio.volume = 0.25; // เปิดคลอเบาๆ ที่ 25% จะได้ไม่กลบเสียงเอฟเฟค
-  
-  bgmAudio.play().catch(err => {
-    console.log("Browser บล็อกเสียง BGM: จะทำงานเมื่อผู้ใช้ตอบโต้หน้าจอ", err);
-  });
-}
-
-// สั่งให้เพลง BGM ทำงานทันทีที่เข้าหน้านี้
-if (currentStory && currentStory.bgm) {
-  startBGM(currentStory.bgm);
-}
-
-// 3. สร้างหน้ามังงะลงใน HTML (เปลี่ยนไปดึงจาก currentStory.scenes)
+// 3. สร้างหน้ามังงะลงใน HTML ทันทีเพื่อให้เบราว์เซอร์เริ่มดาวน์โหลดรูปล่วงหน้า
 if (currentStory && currentStory.scenes) {
   currentStory.scenes.forEach((scene, index) => {
     const sceneDiv = document.createElement('div');
@@ -91,65 +75,88 @@ if (currentStory && currentStory.scenes) {
   });
 }
 
-// 4. ระบบตรวจจับการเลื่อน (Scroll Tracking) โดยใช้ Intersection Observer
-const observerOptions = {
-  root: null, 
-  rootMargin: '0px',
-  threshold: 0.5 // เมื่อฉากโผล่มาเห็นในหน้าจอเกิน 50% ให้ทำงาน
-};
+// 4. ฟังก์ชันหลัก: จะทำงานเมื่อรูปภาพและทุกอย่างในหน้าเว็บโหลดเสร็จสมบูรณ์แล้ว 
+// (แก้อาการเอฟเฟคดังซ้อนกันตั้งแต่ตอนเริ่มเข้าเว็บ)
+function initMangaReader() {
+  // สั่งซ่อนหน้าจอ Loading (ถ้าใน HTML มี tag id="loading-screen" อยู่)
+  if (loadingScreen) {
+    loadingScreen.classList.add('fade-out');
+  }
 
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const sfxUrl = entry.target.dataset.sfx;
-      
-      // เช็คว่าฉากนี้มีเสียงเอฟเฟค และยังไม่เคยเล่นใช่ไหม
-      if (sfxUrl && !entry.target.dataset.played) {
-        playSFX(sfxUrl);
-        entry.target.dataset.played = "true"; // มาร์คไว้ว่าเล่นแล้ว
+  // สั่งเปิดเพลงคลอหลัง (BGM)
+  if (currentStory && currentStory.bgm) {
+    startBGM(currentStory.bgm);
+  }
+
+  // เริ่มรันระบบตรวจจับการเลื่อนหน้าจอด้วย Intersection Observer
+  const observerOptions = {
+    root: null, 
+    rootMargin: '0px',
+    threshold: 0.5 // เห็นรูปเกินครึ่งจอแล้วเสียงถึงจะดัง
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const sfxUrl = entry.target.dataset.sfx;
+        
+        // เล่นเสียงเฉพาะเมื่อมีไฟล์เสียงผูกไว้ และยังไม่เคยเล่นในรอบนี้
+        if (sfxUrl && !entry.target.dataset.played) {
+          playSFX(sfxUrl);
+          entry.target.dataset.played = "true"; 
+        }
       }
-    }
+    });
+  }, observerOptions);
+
+  // สั่งให้ตัวสแกน เริ่มจับตาดูความเคลื่อนไหวของรูปมังงะทั้งหมด
+  document.querySelectorAll('.manga-scene').forEach(scene => {
+    observer.observe(scene);
   });
-}, observerOptions);
+}
 
-// สั่งให้จับตาดูทุกฉากมังงะ
-document.querySelectorAll('.manga-scene').forEach(scene => {
-  observer.observe(scene);
-});
+// 🔥 บังคับให้ระบบเสียงและการตรวจจับการเลื่อน เริ่มทำงานหลังจากหน้าเว็บโหลดเสร็จนิ่งสนิท
+window.addEventListener('load', initMangaReader);
 
-// 5. ฟังก์ชันสำหรับเล่นเสียงเอฟเฟคฉาก (SFX)
+// 5. ฟังก์ชันสำหรับเล่นเพลงคลอหลัง (BGM) วนลูปเบาๆ
+function startBGM(url) {
+  if (!url) return;
+  bgmAudio = new Audio(url);
+  bgmAudio.loop = true;   
+  bgmAudio.volume = 0.25; 
+  bgmAudio.play().catch(err => {
+    console.log("Browser บล็อกเสียง BGM: จะทำงานเมื่อผู้ใช้ตอบโต้หน้าจอ", err);
+  });
+}
+
+// 6. ฟังก์ชันสำหรับเล่นเสียงเอฟเฟคฉาก (SFX)
 function playSFX(url) {
   if (isMuted) return; 
 
   const audio = new Audio(url);
-  audio.volume = 0.7; // ตั้งความดัง 70% ให้ดังชัดกว่าเสียงเพลงคลอหลัง
+  audio.volume = 0.7; // ให้เสียงเอฟเฟคดังชัดเด่นขึ้นมาจากเพลงคลอหลัง
   
   activeSFXs.push(audio);
-  
   audio.play().catch(err => {
     console.log("Browser บล็อกเสียง SFX:", err);
   });
 
-  // พอเสียงเล่นจบ ให้ลบออกจากรายการเสียงที่ทำงานอยู่
   audio.onended = () => {
     const index = activeSFXs.indexOf(audio);
     if (index > -1) activeSFXs.splice(index, 1);
   };
 }
 
-// 6. ระบบปุ่มเปิด-ปิดเสียง (Toggle Mute) - ควบคุมทั้ง BGM และ SFX พร้อมกัน
+// 7. ระบบปุ่มเปิด-ปิดเสียง (Toggle Mute) - ควบคุมทั่ง BGM และ SFX พร้อมกัน
 muteBtn.addEventListener('click', () => {
   isMuted = !isMuted;
   
   if (isMuted) {
     muteBtn.innerText = "🔇 ปิดเสียงอยู่";
-    // 1) หยุดเพลงคลอหลัง
     if (bgmAudio) bgmAudio.pause();
-    // 2) หยุดเสียงเอฟเฟคทุกตัวที่กำลังดังอยู่ ณ ตอนนั้น
     activeSFXs.forEach(audio => audio.pause());
   } else {
     muteBtn.innerText = "🔊 เปิดเสียงอยู่";
-    // เล่นเพลงคลอหลังต่อจากจุดเดิม
     if (bgmAudio) bgmAudio.play().catch(err => console.log(err));
   }
 });

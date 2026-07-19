@@ -186,3 +186,49 @@ header p {
   height: auto;
   display: block;
 }
+/* ==========================================
+   สไตล์หน้าจอ Loading โทนสว่าง (Loading Screen)
+   ========================================== */
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff; /* โทนสว่างสะอาดตา */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* อยู่บนสุดบังทุกอย่างไว้ก่อน */
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+/* เอฟเฟคซ่อนหน้าจอ Loading ตอนโหลดเสร็จ */
+.loading-overlay.fade-out {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.loading-overlay p {
+  margin-top: 20px;
+  color: #7f8c8d;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+/* วงกลมหมุนๆ (Spinner) */
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f1f2f6;
+  border-top: 5px solid #38ada9; /* สีฟ้ามิ้นท์หลักของเว็บ */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
