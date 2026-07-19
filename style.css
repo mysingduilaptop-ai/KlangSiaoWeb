@@ -1,0 +1,188 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: #f8f9fa; /* พื้นหลังสว่าง สบายตา */
+  color: #2d3436; /* ตัวหนังสือสีเทาเข้ม อ่านง่าย ไม่ปวดตา */
+  padding: 3rem 1rem;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 3.5rem;
+}
+
+header h1 {
+  font-size: 2.5rem;
+  color: #1e272e;
+  margin-bottom: 0.6rem;
+  font-weight: 800;
+}
+
+.highlight {
+  color: #38ada9; /* เปลี่ยนเป็นสีเขียวมิ้นท์/ฟ้าสดใส ให้ฟีลลิ่งสว่างและเฟรช */
+}
+
+header p {
+  color: #7f8c8d;
+  font-size: 1rem;
+}
+
+/* ระบบ Grid สำหรับจัดวางการ์ดมังงะ */
+.manga-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* สไตล์ของการ์ดโทนสว่าง */
+.manga-card {
+  background-color: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05); /* เงาบางๆ นุ่มๆ */
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.manga-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 30px rgba(56, 173, 169, 0.15); /* เงาสีฟ้ามิ้นท์เวลาชี้ */
+}
+
+.card-image {
+  position: relative;
+  height: 380px;
+  overflow: hidden;
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.manga-card:hover .card-image img {
+  transform: scale(1.03);
+}
+
+/* ป้ายแท็กประเภทมังงะ */
+.genre {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+
+.tags-Knightsoul_Vacation { background-color: #eb3026; }
+.tags-horror { background-color: #485460; }
+.tags-romance { background-color: #00b812; }
+
+/* รายละเอียดข้อความใต้ภาพ */
+.card-info {
+  padding: 1.5rem;
+  flex-grow: 1;
+  background-color: #ffffff;
+}
+
+.card-info h3 {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.card-info p {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+/* ==========================================
+   สไตล์เพิ่มเติมสำหรับหน้าอ่านมังงะ (Reader Page)
+   ========================================== */
+
+.reader-body {
+  background-color: #f1f2f6; /* สีพื้นหลังนุ่มๆ สไตล์แอปอ่านการ์ตูน */
+  padding: 0;
+  margin: 0;
+}
+
+/* ปุ่มควบคุมเสียงที่ลอยอยู่ */
+.audio-controls {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+  z-index: 1000;
+}
+
+.control-btn {
+  background-color: #ffffff;
+  color: #2d3436;
+  border: 1px solid rgba(0,0,0,0.1);
+  padding: 10px 16px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.control-btn:hover {
+  transform: scale(1.05);
+  background-color: #f8f9fa;
+}
+
+.back-btn {
+  background-color: #38ada9;
+  color: white;
+  border: none;
+}
+
+.back-btn:hover {
+  background-color: #079992;
+  color: white;
+}
+
+/* กล่องแสดงมังงะแนวตั้ง */
+.manga-viewer {
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  box-shadow: 0 0 30px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ช่องมังงะแต่ละช่อง */
+.manga-scene {
+  position: relative;
+  width: 100%;
+  line-height: 0; /* ลบช่องว่างใต้ภาพ */
+}
+
+.manga-scene img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
